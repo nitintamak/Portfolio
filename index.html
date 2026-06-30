@@ -5,729 +5,269 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Nitin Tamak — Observability Engineer</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700;800&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
   :root{
-    --bg:#0B0E14;
-    --panel:#12161F;
-    --panel-2:#171C28;
-    --border:#262E3D;
-    --text:#E8ECF1;
-    --text-dim:#8B95A8;
-    --signal:#5EEAD4;
-    --signal-dim:#2C8A7C;
-    --amber:#F59E0B;
-    --display:'Space Grotesk', sans-serif;
+    --bg:#fbfbfa;
+    --panel:#f2f4f7;
+    --ink:#14171a;
+    --ink-soft:#54606e;
+    --line:#e2e6eb;
+    --accent:#4338ca;
+    --accent-soft:#eef0fc;
+    --good:#1f9d6f;
+    --display:'Archivo', sans-serif;
     --body:'Inter', sans-serif;
-    --mono:'JetBrains Mono', monospace;
+    --mono:'IBM Plex Mono', monospace;
   }
-
-  *{margin:0;padding:0;box-sizing:border-box;}
+  *{margin:0; padding:0; box-sizing:border-box;}
   html{scroll-behavior:smooth;}
-
-  body{
-    background:var(--bg);
-    color:var(--text);
-    font-family:var(--body);
-    line-height:1.6;
-    -webkit-font-smoothing:antialiased;
-  }
-
-  body::before{
-    content:'';
-    position:fixed;
-    inset:0;
-    background-image:
-      linear-gradient(rgba(94,234,212,0.025) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(94,234,212,0.025) 1px, transparent 1px);
-    background-size:48px 48px;
-    pointer-events:none;
-    z-index:0;
-  }
-
+  body{background:var(--bg); color:var(--ink); font-family:var(--body); line-height:1.65;}
   a{color:inherit; text-decoration:none;}
 
-  .wrap{
-    max-width:1040px;
-    margin:0 auto;
-    padding:0 32px;
-    position:relative;
-    z-index:1;
+  .layout{display:flex; max-width:1180px; margin:0 auto;}
+
+  /* Sidebar */
+  .side{
+    width:260px; flex-shrink:0; padding:48px 28px;
+    position:sticky; top:0; height:100vh; display:flex; flex-direction:column;
+    border-right:1px solid var(--line);
+  }
+  .side .name{font-family:var(--display); font-weight:800; font-size:20px; letter-spacing:-0.01em; margin-bottom:2px;}
+  .side .role{font-size:13px; color:var(--ink-soft); margin-bottom:28px;}
+  .side nav{display:flex; flex-direction:column; gap:4px; margin-bottom:auto;}
+  .side nav a{
+    font-size:13.5px; color:var(--ink-soft); padding:8px 10px; border-radius:6px; transition:all .15s;
+  }
+  .side nav a:hover{background:var(--accent-soft); color:var(--accent);}
+  .side .status{
+    display:flex; align-items:center; gap:7px; font-size:12px; color:var(--good);
+    margin-bottom:18px; font-weight:500;
+  }
+  .side .status .dot{width:6px; height:6px; border-radius:50%; background:var(--good);}
+  .side .mini-contact{display:flex; flex-direction:column; gap:8px;}
+  .side .mini-contact a{
+    font-size:12.5px; color:var(--ink-soft); display:flex; align-items:center; gap:6px;
+  }
+  .side .mini-contact a:hover{color:var(--accent);}
+  @media(max-width:880px){
+    .side{display:none;}
   }
 
-  .eyebrow{
-    font-family:var(--mono);
-    font-size:12px;
-    letter-spacing:0.12em;
-    text-transform:uppercase;
-    color:var(--signal);
-    display:flex;
-    align-items:center;
-    gap:8px;
-    margin-bottom:16px;
-  }
-  .eyebrow .dot{
-    width:6px; height:6px; border-radius:50%;
-    background:var(--signal);
-    box-shadow:0 0 8px var(--signal);
-    animation:pulse 2.4s ease-in-out infinite;
-  }
-  @keyframes pulse{
-    0%,100%{opacity:1;}
-    50%{opacity:0.35;}
+  /* Content */
+  .content{flex:1; min-width:0; padding:0 56px;}
+  .content-inner{max-width:760px; padding:60px 0 100px;}
+
+  /* mobile top bar */
+  .mobile-bar{display:none; padding:20px 24px; border-bottom:1px solid var(--line); justify-content:space-between; align-items:center;}
+  .mobile-bar .name{font-family:var(--display); font-weight:800; font-size:17px;}
+  @media(max-width:880px){
+    .mobile-bar{display:flex;}
+    .content{padding:0 24px;}
+    .content-inner{padding:40px 0 80px;}
   }
 
-  /* NAV */
-  nav{
-    position:sticky; top:0; z-index:50;
-    background:rgba(11,14,20,0.85);
-    backdrop-filter:blur(10px);
-    border-bottom:1px solid var(--border);
-  }
-  nav .wrap{
-    display:flex; align-items:center; justify-content:space-between;
-    padding:18px 32px;
-  }
-  .nav-logo{
-    font-family:var(--mono);
-    font-size:14px;
-    color:var(--text);
-    letter-spacing:0.02em;
-  }
-  .nav-logo span{color:var(--signal);}
-  .nav-links{
-    display:flex; gap:28px;
-    font-family:var(--mono);
-    font-size:13px;
-    color:var(--text-dim);
-  }
-  .nav-links a{transition:color 0.2s;}
-  .nav-links a:hover{color:var(--signal);}
-  .nav-cta{
-    font-family:var(--mono);
-    font-size:13px;
-    border:1px solid var(--signal-dim);
-    color:var(--signal);
-    padding:8px 16px;
-    border-radius:4px;
-    transition:all 0.2s;
-  }
-  .nav-cta:hover{background:rgba(94,234,212,0.08); border-color:var(--signal);}
-
-  @media (max-width:720px){
-    .nav-links{display:none;}
-  }
-
-  /* HERO */
-  .hero{
-    padding:96px 0 64px;
-    border-bottom:1px solid var(--border);
-  }
-  .status-panel{
-    border:1px solid var(--border);
-    background:var(--panel);
-    border-radius:8px;
-    overflow:hidden;
-  }
-  .status-header{
-    display:flex; align-items:center; justify-content:space-between;
-    padding:14px 20px;
-    border-bottom:1px solid var(--border);
-    font-family:var(--mono);
-    font-size:12px;
-    color:var(--text-dim);
-  }
-  .status-header .led{
-    display:flex; align-items:center; gap:6px;
-  }
-  .led .dot{
-    width:7px;height:7px;border-radius:50%;
-    background:var(--signal);
-    box-shadow:0 0 6px var(--signal);
-  }
-
-  .hero-main{
-    padding:40px 20px 8px;
-  }
-  .hero h1{
-    font-family:var(--display);
-    font-weight:700;
-    font-size:clamp(32px, 5vw, 52px);
-    line-height:1.08;
-    letter-spacing:-0.01em;
-    margin-bottom:14px;
-  }
-  .hero h1 .accent{color:var(--signal);}
-  .hero p.role{
-    font-family:var(--mono);
-    font-size:15px;
-    color:var(--text-dim);
+  /* hero */
+  .kicker{
+    display:inline-flex; align-items:center; gap:7px; font-size:12.5px; font-weight:600;
+    color:var(--accent); background:var(--accent-soft); padding:6px 12px; border-radius:20px;
     margin-bottom:24px;
   }
-  .hero p.desc{
-    max-width:560px;
-    color:var(--text-dim);
-    font-size:15.5px;
-    margin-bottom:8px;
+  h1{
+    font-family:var(--display); font-weight:800; font-size:clamp(34px,4.6vw,50px);
+    line-height:1.08; letter-spacing:-0.02em; margin-bottom:20px; max-width:600px;
   }
+  h1 em{font-style:normal; color:var(--accent);}
+  .lede{font-size:16.5px; color:var(--ink-soft); max-width:540px; margin-bottom:32px;}
+  .hero-actions{display:flex; gap:12px; flex-wrap:wrap; margin-bottom:46px;}
+  .btn{font-size:13.5px; font-weight:600; padding:11px 20px; border-radius:8px; transition:all .15s;}
+  .btn-fill{background:var(--ink); color:#fff;}
+  .btn-fill:hover{background:var(--accent);}
+  .btn-outline{border:1px solid var(--line); color:var(--ink);}
+  .btn-outline:hover{border-color:var(--accent); color:var(--accent);}
 
-  .chart-wrap{
-    padding:8px 20px 24px;
-  }
-  svg#metricChart{width:100%; height:auto; display:block;}
+  .stat-row{display:grid; grid-template-columns:repeat(4,1fr); gap:1px; background:var(--line); border:1px solid var(--line); border-radius:12px; overflow:hidden;}
+  .stat{background:#fff; padding:18px 18px;}
+  .stat .v{font-family:var(--display); font-weight:800; font-size:24px; color:var(--accent);}
+  .stat .l{font-size:12px; color:var(--ink-soft); margin-top:4px;}
+  @media(max-width:560px){.stat-row{grid-template-columns:repeat(2,1fr);}}
 
-  .metrics-row{
-    display:grid;
-    grid-template-columns:repeat(4, 1fr);
-    border-top:1px solid var(--border);
-  }
-  .metric{
-    padding:18px 20px;
-    border-right:1px solid var(--border);
-  }
-  .metric:last-child{border-right:none;}
-  .metric .val{
-    font-family:var(--mono);
-    font-size:22px;
-    font-weight:600;
-    color:var(--signal);
-  }
-  .metric .lbl{
-    font-family:var(--mono);
-    font-size:11px;
-    color:var(--text-dim);
-    text-transform:uppercase;
-    letter-spacing:0.06em;
-    margin-top:4px;
-  }
+  /* sections */
+  section{padding-top:64px; margin-top:64px; border-top:1px solid var(--line);}
+  section:first-of-type{border-top:none; margin-top:0; padding-top:0;}
+  .eyebrow{font-family:var(--mono); font-size:11.5px; color:var(--accent); text-transform:uppercase; letter-spacing:0.08em; margin-bottom:10px;}
+  .h2{font-family:var(--display); font-weight:800; font-size:26px; letter-spacing:-0.01em; margin-bottom:28px;}
 
-  @media (max-width:640px){
-    .metrics-row{grid-template-columns:repeat(2,1fr);}
-    .metric:nth-child(2){border-right:none;}
-  }
+  /* skills */
+  .skill-list{display:flex; flex-direction:column; gap:0;}
+  .skill-row{display:grid; grid-template-columns:200px 1fr; gap:20px; padding:16px 0; border-bottom:1px solid var(--line);}
+  .skill-row:first-child{padding-top:0;}
+  .skill-row .k{font-size:13.5px; font-weight:600; color:var(--ink);}
+  .tags{display:flex; flex-wrap:wrap; gap:7px;}
+  .tags span{font-size:12.5px; color:var(--ink-soft); background:var(--panel); padding:5px 10px; border-radius:6px;}
+  @media(max-width:600px){.skill-row{grid-template-columns:1fr; gap:8px;}}
 
-  .hero-links{
-    display:flex; gap:14px; flex-wrap:wrap;
-    margin-top:28px;
+  /* experience */
+  .job{padding:30px 0 0;}
+  .job-head{display:flex; justify-content:space-between; align-items:baseline; gap:14px; flex-wrap:wrap; margin-bottom:6px;}
+  .job-head h3{font-family:var(--display); font-weight:700; font-size:18px;}
+  .job-date{font-family:var(--mono); font-size:12px; color:var(--accent); white-space:nowrap;}
+  .transition{
+    color:var(--ink-soft); font-size:14.5px; font-style:italic; padding:16px 18px;
+    background:var(--panel); border-radius:8px; margin:14px 0 22px; line-height:1.75;
   }
-  .pill{
-    font-family:var(--mono);
-    font-size:13px;
-    border:1px solid var(--border);
-    color:var(--text-dim);
-    padding:9px 16px;
-    border-radius:20px;
-    transition:all 0.2s;
-  }
-  .pill:hover{border-color:var(--signal); color:var(--signal);}
-  .pill.primary{
-    border-color:var(--signal-dim);
-    color:var(--signal);
-    background:rgba(94,234,212,0.06);
-  }
-  .pill.primary:hover{background:rgba(94,234,212,0.12); border-color:var(--signal);}
+  .proj-tag{display:inline-flex; align-items:center; gap:6px; font-size:12px; font-weight:600; color:var(--accent); margin-bottom:6px;}
+  .proj-tag::before{content:"◆"; font-size:9px;}
+  .role{font-size:13.5px; color:var(--ink-soft); margin-bottom:16px;}
+  ul.bullets{list-style:none; display:flex; flex-direction:column; gap:11px;}
+  ul.bullets li{position:relative; padding-left:18px; font-size:14.5px; color:#2b3340;}
+  ul.bullets li::before{content:""; position:absolute; left:0; top:8px; width:6px; height:6px; border-radius:50%; background:var(--accent);}
+  ul.bullets li b{color:var(--ink); font-weight:700;}
 
-  /* SECTIONS */
-  section{padding:72px 0;}
-  section.bordered{border-bottom:1px solid var(--border);}
-  .section-head{
-    margin-bottom:40px;
-  }
-  .section-head h2{
-    font-family:var(--display);
-    font-size:28px;
-    font-weight:600;
-    margin-top:6px;
-  }
+  /* education/certs */
+  .grid2{display:grid; grid-template-columns:1.2fr 1fr; gap:24px;}
+  .card{background:var(--panel); border-radius:10px; padding:22px 24px;}
+  .card h4{font-family:var(--display); font-weight:700; font-size:15px; margin-bottom:4px;}
+  .card .meta{font-family:var(--mono); font-size:11.5px; color:var(--accent); margin-bottom:10px;}
+  .cert{display:flex; justify-content:space-between; padding:10px 0; border-bottom:1px solid var(--line); font-size:13.5px;}
+  .cert:last-child{border-bottom:none;}
+  .cert .org{font-size:11.5px; color:var(--ink-soft);}
+  @media(max-width:600px){.grid2{grid-template-columns:1fr;}}
 
-  /* SUMMARY */
-  .summary-grid{
-    display:grid;
-    grid-template-columns:1.3fr 1fr;
-    gap:48px;
-  }
-  @media (max-width:760px){
-    .summary-grid{grid-template-columns:1fr;}
-  }
-  .summary-text p{
-    color:var(--text-dim);
-    font-size:15.5px;
-    margin-bottom:16px;
-  }
-  .summary-text strong{color:var(--text); font-weight:600;}
-
-  .focus-panel{
-    border:1px solid var(--border);
-    background:var(--panel);
-    border-radius:8px;
-    padding:22px;
-  }
-  .focus-panel .ft{
-    font-family:var(--mono);
-    font-size:11px;
-    color:var(--text-dim);
-    text-transform:uppercase;
-    letter-spacing:0.08em;
-    margin-bottom:14px;
-  }
-  .focus-item{
-    display:flex; justify-content:space-between; align-items:center;
-    padding:10px 0;
-    border-bottom:1px solid var(--border);
-    font-size:14px;
-  }
-  .focus-item:last-child{border-bottom:none;}
-  .focus-item .bar-bg{
-    width:80px; height:5px; background:var(--border); border-radius:3px; overflow:hidden;
-  }
-  .focus-item .bar-fill{height:100%; background:var(--signal); border-radius:3px;}
-
-  /* EXPERIENCE TIMELINE */
-  .timeline{
-    border-left:1px solid var(--border);
-    margin-left:8px;
-  }
-  .job{
-    position:relative;
-    padding:0 0 48px 36px;
-  }
-  .job:last-child{padding-bottom:0;}
-  .job::before{
-    content:'';
-    position:absolute;
-    left:-5px; top:4px;
-    width:9px; height:9px;
-    border-radius:50%;
-    background:var(--bg);
-    border:2px solid var(--signal);
-  }
-  .job-head{
-    display:flex; justify-content:space-between; align-items:baseline;
-    flex-wrap:wrap; gap:8px;
-    margin-bottom:6px;
-  }
-  .job-title{
-    font-family:var(--display);
-    font-size:19px;
-    font-weight:600;
-  }
-  .job-company{color:var(--signal); font-weight:500;}
-  .job-date{
-    font-family:var(--mono);
-    font-size:12.5px;
-    color:var(--text-dim);
-  }
-  .job-list{
-    list-style:none;
-    margin-top:12px;
-  }
-  .job-list li{
-    position:relative;
-    padding-left:18px;
-    margin-bottom:10px;
-    color:var(--text-dim);
-    font-size:14.5px;
-  }
-  .job-list li::before{
-    content:'›';
-    position:absolute; left:0; top:0;
-    color:var(--signal);
-    font-family:var(--mono);
-  }
-  .job-list li strong{color:var(--text);}
-  .tag-row{
-    display:flex; gap:8px; flex-wrap:wrap;
-    margin-top:14px;
-  }
-  .tag{
-    font-family:var(--mono);
-    font-size:11px;
-    color:var(--text-dim);
-    border:1px solid var(--border);
-    padding:4px 10px;
-    border-radius:4px;
-  }
-
-  /* SKILLS */
-  .skills-grid{
-    display:grid;
-    grid-template-columns:repeat(2, 1fr);
-    gap:20px;
-  }
-  @media (max-width:700px){
-    .skills-grid{grid-template-columns:1fr;}
-  }
-  .skill-card{
-    border:1px solid var(--border);
-    background:var(--panel);
-    border-radius:8px;
-    padding:22px;
-  }
-  .skill-card .sh{
-    display:flex; align-items:center; gap:10px;
-    margin-bottom:14px;
-  }
-  .skill-card .sh .idx{
-    font-family:var(--mono);
-    font-size:12px;
-    color:var(--signal-dim);
-    border:1px solid var(--border);
-    border-radius:4px;
-    padding:3px 7px;
-  }
-  .skill-card h3{
-    font-family:var(--display);
-    font-size:16px;
-    font-weight:600;
-  }
-  .skill-tags{display:flex; flex-wrap:wrap; gap:8px;}
-  .skill-tags span{
-    font-family:var(--mono);
-    font-size:12.5px;
-    color:var(--text-dim);
-    background:var(--panel-2);
-    border:1px solid var(--border);
-    padding:5px 10px;
-    border-radius:4px;
-  }
-
-  /* CERTS / EDUCATION */
-  .two-col{
-    display:grid;
-    grid-template-columns:1fr 1fr;
-    gap:48px;
-  }
-  @media (max-width:760px){
-    .two-col{grid-template-columns:1fr;}
-  }
-  .cert-item, .edu-item{
-    border:1px solid var(--border);
-    background:var(--panel);
-    border-radius:8px;
-    padding:18px 20px;
-    margin-bottom:14px;
-  }
-  .cert-item .ct, .edu-item .ct{
-    font-family:var(--display);
-    font-weight:600;
-    font-size:15px;
-    margin-bottom:4px;
-  }
-  .cert-item .cs, .edu-item .cs{
-    font-family:var(--mono);
-    font-size:12.5px;
-    color:var(--signal);
-  }
-  .edu-item .cd{
-    color:var(--text-dim);
-    font-size:13.5px;
-    margin-top:8px;
-  }
-
-  /* CONTACT / FOOTER */
-  footer{
-    padding:64px 0 48px;
-    text-align:center;
-  }
-  footer h2{
-    font-family:var(--display);
-    font-size:30px;
-    margin-bottom:14px;
-  }
-  footer p{
-    color:var(--text-dim);
-    max-width:480px;
-    margin:0 auto 28px;
-  }
-  .contact-row{
-    display:flex; justify-content:center; gap:14px; flex-wrap:wrap;
-    margin-bottom:40px;
-  }
-  .foot-note{
-    font-family:var(--mono);
-    font-size:11.5px;
-    color:var(--text-dim);
-    opacity:0.6;
-  }
-
-  @media (prefers-reduced-motion: reduce){
-    .eyebrow .dot{animation:none;}
-    #signalPath, #signalPathGlow{animation:none !important;}
-  }
-
-  a:focus-visible, button:focus-visible{
-    outline:2px solid var(--signal);
-    outline-offset:3px;
-  }
+  /* footer */
+  footer{padding:60px 0 20px; text-align:left;}
+  footer h2{font-family:var(--display); font-weight:800; font-size:26px; margin-bottom:10px;}
+  footer p{color:var(--ink-soft); margin-bottom:24px; max-width:480px;}
+  .contact-row{display:flex; gap:12px; flex-wrap:wrap;}
 </style>
 </head>
 <body>
 
-<nav>
-  <div class="wrap">
-    <div class="nav-logo">NITIN<span>.</span>TAMAK</div>
-    <div class="nav-links">
-      <a href="#experience">experience</a>
-      <a href="#skills">skills</a>
-      <a href="#certs">certifications</a>
-      <a href="#contact">contact</a>
+<div class="mobile-bar">
+  <div class="name">Nitin Tamak</div>
+  <a class="btn btn-fill" style="padding:8px 14px; font-size:12.5px;" href="mailto:nitintamak8@gmail.com">Email</a>
+</div>
+
+<div class="layout">
+  <aside class="side">
+    <div class="status"><span class="dot"></span>Available — relocating to Ireland</div>
+    <div class="name">Nitin Tamak</div>
+    <div class="role">Observability Engineer</div>
+    <nav>
+      <a href="#skills">Skills</a>
+      <a href="#experience">Experience</a>
+      <a href="#credentials">Education &amp; Certs</a>
+      <a href="#contact">Contact</a>
+    </nav>
+    <div class="mini-contact">
+      <a href="mailto:nitintamak8@gmail.com">nitintamak8@gmail.com</a>
+      <a href="tel:+919306207104">+91 93062 07104</a>
+      <a href="#" target="_blank">LinkedIn Profile →</a>
     </div>
-    <a class="nav-cta" href="mailto:nitintamak8@gmail.com">contact()</a>
-  </div>
-</nav>
+  </aside>
 
-<header class="hero">
-  <div class="wrap">
-    <div class="status-panel">
-      <div class="status-header">
-        <span>system.status — nitin_tamak.profile</span>
-        <span class="led"><span class="dot"></span>operational</span>
-      </div>
-      <div class="hero-main">
-        <div class="eyebrow"><span class="dot"></span>available for relocation — ireland</div>
-        <h1>Keeping enterprise systems<br>observable, <span class="accent">stable</span>, and <span class="accent">explainable.</span></h1>
-        <p class="role">Software Engineer · Observability &amp; APM · Dynatrace Specialist</p>
-        <p class="desc">3 years turning raw telemetry into decisions — building the dashboards, queries, and automations that let teams catch problems before customers do.</p>
-        <div class="hero-links">
-          <a class="pill primary" href="mailto:nitintamak8@gmail.com">Email me</a>
-          <a class="pill" href="tel:+919306207104">+91 93062 07104</a>
-          <a class="pill" href="#experience">View experience ↓</a>
+  <main class="content">
+    <div class="content-inner">
+
+      <section>
+        <span class="kicker">2.5+ years · Dynatrace · REST APIs · DQL</span>
+        <h1>Turning system data<br>into <em>answers</em>, not<br>more dashboards.</h1>
+        <p class="lede">Observability Engineer specializing in APM, log pipeline migrations, and REST API automation across enterprise environments — built on a foundation in Salesforce workflow automation.</p>
+        <div class="hero-actions">
+          <a class="btn btn-fill" href="mailto:nitintamak8@gmail.com">Get in touch</a>
+          <a class="btn btn-outline" href="#experience">View experience</a>
         </div>
-      </div>
-
-      <div class="chart-wrap">
-        <svg id="metricChart" viewBox="0 0 1000 160" preserveAspectRatio="none">
-          <defs>
-            <linearGradient id="fillGrad" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stop-color="#5EEAD4" stop-opacity="0.18"/>
-              <stop offset="100%" stop-color="#5EEAD4" stop-opacity="0"/>
-            </linearGradient>
-          </defs>
-          <!-- grid lines -->
-          <line x1="0" y1="40" x2="1000" y2="40" stroke="#262E3D" stroke-width="1"/>
-          <line x1="0" y1="80" x2="1000" y2="80" stroke="#262E3D" stroke-width="1"/>
-          <line x1="0" y1="120" x2="1000" y2="120" stroke="#262E3D" stroke-width="1"/>
-
-          <path id="areaPath" d="M0,110 C60,108 100,105 150,107 C220,109 260,100 320,95 C380,90 410,30 440,25 C470,20 500,95 560,100 C620,105 660,95 720,92 C780,89 830,98 880,96 C920,94 960,90 1000,88 L1000,160 L0,160 Z" fill="url(#fillGrad)"/>
-
-          <path id="signalPath" d="M0,110 C60,108 100,105 150,107 C220,109 260,100 320,95 C380,90 410,30 440,25 C470,20 500,95 560,100 C620,105 660,95 720,92 C780,89 830,98 880,96 C920,94 960,90 1000,88"
-            fill="none" stroke="#5EEAD4" stroke-width="2.5" stroke-linecap="round"/>
-
-          <!-- anomaly marker -->
-          <circle cx="440" cy="25" r="5" fill="#F59E0B"/>
-          <circle cx="440" cy="25" r="9" fill="none" stroke="#F59E0B" stroke-width="1.5" opacity="0.6">
-            <animate attributeName="r" values="6;16;6" dur="2.2s" repeatCount="indefinite"/>
-            <animate attributeName="opacity" values="0.7;0;0.7" dur="2.2s" repeatCount="indefinite"/>
-          </circle>
-          <text x="450" y="18" font-family="JetBrains Mono" font-size="10" fill="#F59E0B">anomaly detected</text>
-          <text x="450" y="48" font-family="JetBrains Mono" font-size="10" fill="#5EEAD4">resolved · MTTR ↓15%</text>
-        </svg>
-      </div>
-
-      <div class="metrics-row">
-        <div class="metric">
-          <div class="val">3 yrs</div>
-          <div class="lbl">Observability Eng.</div>
+        <div class="stat-row">
+          <div class="stat"><div class="v">30+</div><div class="l">Apps migrated</div></div>
+          <div class="stat"><div class="v">↓50%</div><div class="l">Manual effort</div></div>
+          <div class="stat"><div class="v">↓15%</div><div class="l">Incident MTTR</div></div>
+          <div class="stat"><div class="v">2.5+ yrs</div><div class="l">In production</div></div>
         </div>
-        <div class="metric">
-          <div class="val">30+</div>
-          <div class="lbl">Apps Migrated</div>
-        </div>
-        <div class="metric">
-          <div class="val">↓15%</div>
-          <div class="lbl">Incident MTTR</div>
-        </div>
-        <div class="metric">
-          <div class="val">↓50%</div>
-          <div class="lbl">Manual Effort</div>
-        </div>
-      </div>
-    </div>
-  </div>
-</header>
+      </section>
 
-<section class="bordered">
-  <div class="wrap">
-    <div class="section-head">
-      <div class="eyebrow">// profile</div>
-      <h2>Profile summary</h2>
-    </div>
-    <div class="summary-grid">
-      <div class="summary-text">
-        <p>I'm an <strong>Observability Engineer</strong> with three years of experience inside Dynatrace-driven Application Performance Monitoring, working across large-scale enterprise environments where uptime and signal clarity actually matter. My day-to-day spans <strong>cloud migrations, log pipeline integrations, and post-deployment validation</strong> — the unglamorous but critical work that keeps incident response fast and noise low.</p>
-        <p>I started out as a <strong>Salesforce Administrator</strong>, building a solid foundation in Flow Builder, workflow automation, and SaaS application logic — a background that still shapes how I think about process, documentation, and stakeholder coordination today. That transition into observability gave me an unusual angle on monitoring: I think about systems the way I once thought about business processes — as flows that can break, and need clear automated triggers when they do.</p>
-        <p>My technical core is <strong>REST APIs, DQL, Python, and SQL</strong>, used to automate the kind of monitoring data retrieval and validation that would otherwise eat hours of manual effort. I've collaborated daily with teams across the <strong>US, Canada, and EMEA</strong>, which has sharpened both my communication and my comfort working async across time zones — directly relevant for distributed Ireland-based teams.</p>
-        <p>I'm currently seeking <strong>IT opportunities in Ireland</strong>, open to relocation and requiring employment visa sponsorship.</p>
-      </div>
-      <div class="focus-panel">
-        <div class="ft">core_competency.weighting</div>
-        <div class="focus-item"><span>Dynatrace / APM</span><div class="bar-bg"><div class="bar-fill" style="width:95%"></div></div></div>
-        <div class="focus-item"><span>REST API Automation</span><div class="bar-bg"><div class="bar-fill" style="width:85%"></div></div></div>
-        <div class="focus-item"><span>DQL &amp; Log Analytics</span><div class="bar-bg"><div class="bar-fill" style="width:85%"></div></div></div>
-        <div class="focus-item"><span>Python Scripting</span><div class="bar-bg"><div class="bar-fill" style="width:75%"></div></div></div>
-        <div class="focus-item"><span>Cloud Migration Coord.</span><div class="bar-bg"><div class="bar-fill" style="width:80%"></div></div></div>
-        <div class="focus-item"><span>Salesforce Admin</span><div class="bar-bg"><div class="bar-fill" style="width:65%"></div></div></div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<section class="bordered" id="experience">
-  <div class="wrap">
-    <div class="section-head">
-      <div class="eyebrow">// log_history</div>
-      <h2>Professional experience</h2>
-    </div>
-
-    <div class="timeline">
-      <div class="job">
-        <div class="job-head">
-          <div>
-            <span class="job-title">Software Engineer</span> · <span class="job-company">Edward Jones</span> <span style="color:var(--text-dim); font-size:13px;">(Project, via TEKsystems Global Services)</span>
+      <section id="skills">
+        <div class="eyebrow">Skills</div>
+        <div class="h2">Toolset &amp; Stack</div>
+        <div class="skill-list">
+          <div class="skill-row">
+            <div class="k">Monitoring &amp; Observability</div>
+            <div class="tags"><span>Dynatrace (Managed &amp; SaaS)</span><span>OneAgent</span><span>Log Monitoring</span><span>Anomaly Detection</span></div>
           </div>
-          <div class="job-date">APR 2026 — PRESENT</div>
-        </div>
-        <ul class="job-list">
-          <li>Partnered with application and infrastructure teams on a <strong>Splunk-to-Dynatrace log migration</strong>, running post-migration validation with SPL and DQL inside Dynatrace Notebooks — owning roughly <strong>30% of the total validation effort</strong> across the project.</li>
-          <li>Built REST API automation to handle monitoring data retrieval that was previously pulled manually, <strong>cutting manual effort by 50%</strong> and freeing up time for higher-value analysis work.</li>
-          <li>Played a key role in a <strong>JMX Extensions version upgrade</strong>, contributing to 40% of the effort by converting legacy JSON configuration into YAML through a custom automation pass — reducing config drift risk during the upgrade.</li>
-        </ul>
-        <div class="tag-row">
-          <span class="tag">DQL</span><span class="tag">Dynatrace Notebooks</span><span class="tag">SPL</span><span class="tag">REST APIs</span><span class="tag">JMX</span>
-        </div>
-      </div>
-
-      <div class="job">
-        <div class="job-head">
-          <div>
-            <span class="job-title">Associate Engineer</span> · <span class="job-company">Edward Jones</span> <span style="color:var(--text-dim); font-size:13px;">(Project, via TEKsystems Global Services)</span>
+          <div class="skill-row">
+            <div class="k">APIs &amp; Data</div>
+            <div class="tags"><span>REST APIs</span><span>API Testing</span><span>JSON</span><span>Data Extraction</span></div>
           </div>
-          <div class="job-date">DEC 2024 — MAR 2026</div>
-        </div>
-        <ul class="job-list">
-          <li>Supported the migration of <strong>30+ enterprise applications</strong> from Dynatrace Managed to Dynatrace SaaS — handling application detail collection, cross-team coordination, and end-to-end documentation that became a reusable knowledge base for future migrations.</li>
-          <li>Optimized monitoring configurations across the application portfolio to <strong>improve observability while actively reducing alert noise</strong> — tuning thresholds and metric events so on-call teams only got paged for signal, not noise.</li>
-          <li>Performed root cause analysis using performance metrics and log data, helping <strong>speed up incident resolution by 15%</strong>.</li>
-          <li>Coordinated with stakeholders to manage <strong>50% of OneAgent feature enablement</strong> rollouts, scheduling and executing timely process restarts with minimal service disruption.</li>
-          <li>Documented the full <strong>Azure-to-Dynatrace log integration path via Event Hubs</strong>, streamlining how new log sources were onboarded and how teams estimated incoming log volume ahead of migration.</li>
-        </ul>
-        <div class="tag-row">
-          <span class="tag">Dynatrace Managed → SaaS</span><span class="tag">OneAgent</span><span class="tag">Azure Event Hubs</span><span class="tag">Anomaly Detection</span>
-        </div>
-      </div>
-
-      <div class="job">
-        <div class="job-head">
-          <div>
-            <span class="job-title">Observability Engineer</span> · <span class="job-company">TEKsystems Global Services</span>
+          <div class="skill-row">
+            <div class="k">Programming &amp; Query</div>
+            <div class="tags"><span>Python</span><span>Java</span><span>Apex</span><span>C/C++</span><span>SQL</span><span>DQL</span></div>
           </div>
-          <div class="job-date">FEB 2023 — PRESENT</div>
+          <div class="skill-row">
+            <div class="k">Configuration</div>
+            <div class="tags"><span>Dynatrace Notebooks</span><span>Dashboards</span><span>Metric Events</span></div>
+          </div>
+          <div class="skill-row">
+            <div class="k">Tools</div>
+            <div class="tags"><span>VS Code</span><span>Jira</span><span>Git</span><span>ServiceNow</span><span>Excel</span></div>
+          </div>
         </div>
-        <ul class="job-list">
-          <li>Began as a <strong>Salesforce Administrator</strong>, building a strong grounding in Flow Builder, workflow automation, and end-to-end Salesforce SaaS application functionality.</li>
-          <li>Transitioned internally into an <strong>Observability Engineer</strong> role, specializing in APM, log analytics, dashboard design, and REST API-driven monitoring workflows.</li>
-          <li>Collaborate daily with global, cross-functional teams across the <strong>US, Canada, and EMEA</strong> regions, relying on strong written communication and analytical framing to align fast-moving distributed teams.</li>
-        </ul>
-        <div class="tag-row">
-          <span class="tag">Salesforce Flow Builder</span><span class="tag">Workflow Automation</span><span class="tag">Global Collaboration</span>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
+      </section>
 
-<section class="bordered" id="skills">
-  <div class="wrap">
-    <div class="section-head">
-      <div class="eyebrow">// stack_trace</div>
-      <h2>Skills &amp; tooling</h2>
-    </div>
-    <div class="skills-grid">
-      <div class="skill-card">
-        <div class="sh"><span class="idx">01</span><h3>Monitoring &amp; Observability</h3></div>
-        <div class="skill-tags">
-          <span>Dynatrace</span><span>OneAgent</span><span>APM</span><span>Infrastructure Monitoring</span><span>Log Monitoring</span><span>Anomaly Detection</span>
-        </div>
-      </div>
-      <div class="skill-card">
-        <div class="sh"><span class="idx">02</span><h3>APIs &amp; Data</h3></div>
-        <div class="skill-tags">
-          <span>REST APIs</span><span>API Testing</span><span>Data Extraction</span><span>JSON</span>
-        </div>
-      </div>
-      <div class="skill-card">
-        <div class="sh"><span class="idx">03</span><h3>Programming &amp; Query</h3></div>
-        <div class="skill-tags">
-          <span>Python</span><span>Java</span><span>Apex</span><span>C/C++</span><span>SQL</span><span>DQL</span>
-        </div>
-      </div>
-      <div class="skill-card">
-        <div class="sh"><span class="idx">04</span><h3>Dynatrace Configuration</h3></div>
-        <div class="skill-tags">
-          <span>Dynatrace Notebooks</span><span>Dashboards</span><span>Metric Events</span><span>Metrics &amp; Log Analysis</span>
-        </div>
-      </div>
-      <div class="skill-card">
-        <div class="sh"><span class="idx">05</span><h3>Tools &amp; Platforms</h3></div>
-        <div class="skill-tags">
-          <span>VS Code</span><span>Jira</span><span>Git</span><span>ServiceNow</span><span>Excel</span>
-        </div>
-      </div>
-      <div class="skill-card">
-        <div class="sh"><span class="idx">06</span><h3>Cloud &amp; Migration</h3></div>
-        <div class="skill-tags">
-          <span>Dynatrace Managed → SaaS</span><span>Azure Event Hubs</span><span>Splunk → Dynatrace</span>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
+      <section id="experience">
+        <div class="eyebrow">Experience</div>
+        <div class="h2">Professional Experience</div>
+        <div class="job">
+          <div class="job-head">
+            <h3>TEKsystems Global Services</h3>
+            <span class="job-date">Dec 2023 — Present</span>
+          </div>
+          <div class="transition">Started my career as a Salesforce Administrator, building a strong foundation in Flow Builder and workflow design — experience that directly shaped my transition into Observability Engineering, where I apply similar problem-solving and automation skills to log analytics, dashboards, and REST API-driven monitoring.</div>
 
-<section class="bordered" id="certs">
-  <div class="wrap">
-    <div class="section-head">
-      <div class="eyebrow">// credentials</div>
-      <h2>Certifications &amp; education</h2>
-    </div>
-    <div class="two-col">
-      <div>
-        <div class="cert-item">
-          <div class="ct">Data Cloud Consultant Certification</div>
-          <div class="cs">Salesforce</div>
+          <div class="proj-tag">Project: Edward Jones</div>
+          <div class="role">Software Engineer (Observability Engineer)</div>
+          <ul class="bullets">
+            <li>Collaborated with application and infrastructure teams on Splunk → Dynatrace log migration, performing post-migration validation using SPL and DQL (Dynatrace Notebooks) — <b>contributed 30%</b> of the validation effort.</li>
+            <li>Automated monitoring data retrieval using REST APIs, <b>reducing manual effort by 50%</b>.</li>
+            <li>Contributed <b>40%</b> of the JMX Extensions version upgrade, converting JSON config to YAML via automation.</li>
+            <li>Supported migration of <b>30+ enterprise applications</b> from Dynatrace Managed to SaaS — application detail collection, cross-team coordination, end-to-end documentation.</li>
+            <li>Optimized monitoring configurations to improve observability and reduce alert noise.</li>
+            <li>Performed root cause analysis on performance metrics and logs, <b>cutting incident resolution time by 15%</b>.</li>
+            <li>Managed <b>50%</b> of OneAgent Feature Enablement through stakeholder coordination for timely process restarts.</li>
+            <li>Documented Azure-to-Dynatrace log integration via Event Hubs, streamlining log onboarding and volume estimation.</li>
+          </ul>
         </div>
-        <div class="cert-item">
-          <div class="ct">Process Automation Accredited Professional</div>
-          <div class="cs">Salesforce Partner Learning Camp</div>
-        </div>
-        <div class="cert-item">
-          <div class="ct">Salesforce Certified Administrator</div>
-          <div class="cs">Salesforce</div>
-        </div>
-      </div>
-      <div>
-        <div class="edu-item">
-          <div class="ct">Bachelor of Computer Science &amp; Engineering</div>
-          <div class="cs">Chandigarh University · 2019–2023</div>
-          <div class="cd">Coursework focused on programming, database management, system design, and communication skills — the technical and collaborative foundation that carried directly into observability engineering work.</div>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
+      </section>
 
-<footer id="contact">
-  <div class="wrap">
-    <div class="eyebrow" style="justify-content:center;"><span class="dot"></span>open to relocation — ireland</div>
-    <h2>Let's talk observability.</h2>
-    <p>Open to Observability, SRE, and APM roles across Ireland. Visa sponsorship required — happy to discuss timelines and logistics directly.</p>
-    <div class="contact-row">
-      <a class="pill primary" href="mailto:nitintamak8@gmail.com">nitintamak8@gmail.com</a>
-      <a class="pill" href="tel:+919306207104">+91 93062 07104</a>
-    </div>
-    <div class="foot-note">status: operational · uptime: 3+ years · last deployed: edward jones, apr 2026</div>
-  </div>
-</footer>
+      <section id="credentials">
+        <div class="eyebrow">Credentials</div>
+        <div class="h2">Education &amp; Certifications</div>
+        <div class="grid2">
+          <div class="card">
+            <h4>Bachelor of Computer Science &amp; Engineering</h4>
+            <div class="meta">Chandigarh University · 2019–2023</div>
+            <p style="font-size:13.5px; color:#2b3340;">Coursework focused on Programming, Database Management, System Design, and Communication Skills.</p>
+          </div>
+          <div class="card">
+            <h4 style="margin-bottom:14px;">Certifications</h4>
+            <div class="cert"><span>Data Cloud Consultant Certification</span><span class="org">Salesforce</span></div>
+            <div class="cert"><span>Process Automation Accredited Pro.</span><span class="org">SF Partner Camp</span></div>
+            <div class="cert"><span>Salesforce Certified Administrator</span><span class="org">Salesforce</span></div>
+          </div>
+        </div>
+      </section>
 
+      <footer id="contact">
+        <div class="eyebrow">Contact</div>
+        <h2>Let's talk observability.</h2>
+        <p>Open to IT opportunities in Ireland — relocation-ready, visa sponsorship required.</p>
+        <div class="contact-row">
+          <a class="btn btn-fill" href="mailto:nitintamak8@gmail.com">nitintamak8@gmail.com</a>
+          <a class="btn btn-outline" href="tel:+919306207104">+91 93062 07104</a>
+          <a class="btn btn-outline" href="#" target="_blank">LinkedIn</a>
+        </div>
+      </footer>
+
+    </div>
+  </main>
+</div>
 </body>
 </html>
